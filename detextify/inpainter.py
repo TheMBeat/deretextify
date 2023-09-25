@@ -151,13 +151,14 @@ class LocalSDInpainter(StableDiffusionInpainter):
 
   def __init__(self, pipe: StableDiffusionInpaintPipeline = None):
     if pipe is None:
-      if not torch.cuda.is_available():
-        raise Exception("You need a GPU + CUDA to run this model locally.")
+      # if not torch.cuda.is_available():
+      #   raise Exception("You need a GPU + CUDA to run this model locally.")
 
+      device = torch.device("mps" if torch.backends.mps.is_available() else "cuda" if torch.cuda.is_available() else "cpu")
       self.pipe = StableDiffusionInpaintPipeline.from_pretrained(
           "stabilityai/stable-diffusion-2-inpainting",
           revision="fp16",
-          torch_dtype=torch.float16).to("cuda")
+          torch_dtype=torch.float16).to(device)
     else:
       self.pipe = pipe
 
